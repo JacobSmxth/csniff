@@ -1,6 +1,6 @@
 CC      = gcc
 CFLAGS  = -Wall -Wextra -Iinclude
-TARGET  = port_sniffer
+TARGET  = ./build/port_sniffer
 
 SRC     = $(wildcard src/*.c)
 OBJ     = $(patsubst src/%.c, build/%.o, $(SRC))

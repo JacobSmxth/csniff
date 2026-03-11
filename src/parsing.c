@@ -31,11 +31,25 @@ void two_args(char *argv[]) {
   }
 }
 
+void print_help() {
+  printf("HELP ISN't AVAILABLE... Trying API again in 5 seconds... (I'm joking "
+         "just haven't coded anything\n");
+}
+
 void process_parsings(int argc, char *argv[]) {
-  if (argc <= 1) {
-    fprintf(stderr, "Error: must enter arguments (See -h for help)\n");
-  } else if (argc == 2) {
-    two_args(argv);
+  for (int i = 1; i < argc; i++) {
+    char argument = validate_argument(argv[i]);
+    switch (argument) {
+    case 't':
+      printf("TARGET: %s\n", argv[++i]);
+      break;
+    case 'p':
+      printf("PORT RANGE: %s\n", argv[++i]);
+      break;
+    case 'h':
+      print_help();
+      break;
+    }
   }
 }
 
