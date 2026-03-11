@@ -1,7 +1,8 @@
+#include "parsing.h"
 #include "prompt.h"
-#include <stdio.h>
 
-int main() {
+int main(int argc, char *argv[]) {
+  parse_arguments(argc, argv);
   menuPrompt();
   return 0;
 }
