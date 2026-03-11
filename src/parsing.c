@@ -19,7 +19,7 @@ char validate_argument(char *argument) {
 
 void print_help() {
   printf("HELP ISN't AVAILABLE... Trying API again in 5 seconds... (I'm joking "
-         "just haven't coded anything\n");
+         "just haven't coded anything)\n");
 }
 
 int *validate_port_range(char *ports) {
@@ -50,14 +50,10 @@ int get_ports(ScanArgs *args, char *ports) {
   int *thePorts = validate_port_range(ports);
   if (thePorts) {
     if (thePorts[0] == thePorts[1]) {
-      printf("Single Port: %d\n", thePorts[0]);
       args->port_start = thePorts[0];
       args->port_end = thePorts[0];
     } else {
 
-      printf("Dual Ports: \n");
-      printf("%d\n", thePorts[0]);
-      printf("%d\n", thePorts[1]);
       args->port_start = thePorts[0];
       args->port_end = thePorts[1];
     }
@@ -128,8 +124,22 @@ void process_parsings(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
   }
-  printf("FINAL CHECK: %s: %d, %d", scan_args->target, scan_args->port_start,
+
+  // TESTING and DEBUGS:
+  if (!scan_args->target) {
+    scan_args->target = malloc(strlen("192.168.1.0") + 1);
+    scan_args->target = "192.168.1.0";
+  }
+  if (!scan_args->port_start) {
+    scan_args->port_start = 1;
+  }
+  if (!scan_args->port_end) {
+    scan_args->port_end = 1024;
+  }
+  printf("FINAL CHECK: %s: %d, %d\n", scan_args->target, scan_args->port_start,
          scan_args->port_end);
+  // END OF TESTING and DEBUGS
+
   free(scan_args);
 }
 
