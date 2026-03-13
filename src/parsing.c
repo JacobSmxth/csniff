@@ -85,11 +85,11 @@ int get_target(ScanArgs *scan_args, char *target) {
   return 1;
 }
 
-void process_parsings(int argc, char *argv[]) {
+ScanArgs *process_parsings(int argc, char *argv[]) {
   ScanArgs *scan_args = malloc(sizeof(ScanArgs));
   if (!scan_args) {
     fprintf(stderr, "Malloc error\n");
-    return;
+    return NULL;
   }
 
   for (int i = 1; i < argc; i++) {
@@ -126,25 +126,24 @@ void process_parsings(int argc, char *argv[]) {
   }
 
   // TESTING and DEBUGS:
-  if (!scan_args->target) {
-    scan_args->target = malloc(strlen("192.168.1.0") + 1);
-    scan_args->target = "192.168.1.0";
-  }
-  if (!scan_args->port_start) {
-    scan_args->port_start = 1;
-  }
-  if (!scan_args->port_end) {
-    scan_args->port_end = 1024;
-  }
-  printf("FINAL CHECK: %s: %d, %d\n", scan_args->target, scan_args->port_start,
-         scan_args->port_end);
+  // if (!scan_args->target) {
+  //   scan_args->target = malloc(strlen("192.168.1.0") + 1);
+  //   scan_args->target = "192.168.1.0";
+  // }
+  // if (!scan_args->port_start) {
+  //   scan_args->port_start = 1;
+  // }
+  // if (!scan_args->port_end) {
+  //   scan_args->port_end = 1024;
+  // }
+  // printf("FINAL CHECK: %s: %d, %d\n", scan_args->target,
+  // scan_args->port_start,
+  //        scan_args->port_end);
   // END OF TESTING and DEBUGS
 
-  free(scan_args);
+  return scan_args;
 }
 
-int parse_arguments(int argc, char *argv[]) {
-  process_parsings(argc, argv);
-
-  return 1;
+ScanArgs *parse_arguments(int argc, char *argv[]) {
+  return process_parsings(argc, argv);
 }
