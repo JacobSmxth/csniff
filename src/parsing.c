@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 typedef struct {
   char *target;
@@ -46,6 +47,7 @@ int *validate_port_range(char *ports) {
 int get_ports(ScanArgs *args, char *ports) {
   // Just making sure my pointer logic is correct
 
+  int changed = 0;
   int *thePorts = validate_port_range(ports);
   if (thePorts) {
     if (thePorts[0] == thePorts[1]) {
@@ -53,8 +55,26 @@ int get_ports(ScanArgs *args, char *ports) {
       args->port_end = thePorts[0];
     } else {
 
-      args->port_start = thePorts[0];
-      args->port_end = thePorts[1];
+      if (thePorts[0] <= 0) {
+        fprintf(stderr, "Dawg. I swear. There isn't a port 0. I set it to 1 "
+                        "instead. Cause I think we want this to run\n");
+        args->port_start = 1;
+        changed = 1;
+      } else {
+
+        args->port_start = thePorts[0];
+      }
+      if (thePorts[1] > 65335) {
+        fprintf(stderr, "You should know ports only go up to 65335. I have set "
+                        "it to that just so this will function.\n");
+        args->port_end = 65335;
+        changed = 1;
+      } else {
+
+        args->port_end = thePorts[1];
+      }
+      if (changed)
+        sleep(4);
     }
     free(thePorts);
   } else {
