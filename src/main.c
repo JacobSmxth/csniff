@@ -27,9 +27,9 @@ void test_scan(ScanArgs *arguments) {
     }
 
     close(sock);
-    free(arguments->target);
-    free(arguments);
   }
+  free(arguments->target);
+  free(arguments);
 }
 
 int main(int argc, char *argv[]) {
