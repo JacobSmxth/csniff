@@ -45,7 +45,6 @@ int *validate_port_range(char *ports) {
 
 int get_ports(ScanArgs *args, char *ports) {
   // Just making sure my pointer logic is correct
-  printf("PORTS: %s\n", ports);
 
   int *thePorts = validate_port_range(ports);
   if (thePorts) {
