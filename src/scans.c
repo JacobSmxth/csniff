@@ -7,12 +7,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-typedef struct {
-  char *target;
-  int port;
-  int open_exclusive;
-} Args;
-
 int scan(char *target, int port) {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
@@ -54,6 +48,26 @@ void *threaded_scan(void *args) {
   return NULL;
 }
 
+void legacy_scan(ScanArgs *arguments) {
+  printf("Running legacy scan\n");
+  int start = arguments->port_start;
+  int end = arguments->port_end;
+  int open_exclusive = arguments->open_exclusive;
+
+  for (int port = start; port < end; port++) {
+    if (scan(arguments->target, port)) {
+      printf("Port %d open\n", port);
+    } else {
+      if (!open_exclusive) {
+        printf("Port %d closed\n", port);
+      }
+    }
+  }
+
+  free(arguments->target);
+  free(arguments);
+}
+
 void tcp_scan(ScanArgs *arguments) {
   printf("Running TCP Scan\n");
   int start = arguments->port_start;
@@ -61,7 +75,10 @@ void tcp_scan(ScanArgs *arguments) {
   int count = end - start + 1;
 
   if (count > 4500) {
-    printf("I aint doing all that.\n");
+    printf(
+        "I DONT KNOW THREAD POOLS YET. ARE YOU TRYING TO FRY YOUR RAM?!?!\n");
+    printf("Falling back to legacy not multithreaded things to handle this\n");
+    legacy_scan(arguments);
     return;
   }
 
@@ -109,6 +126,9 @@ void scan_target(ScanArgs *arguments) {
     break;
   case SYN:
     syn_scan(arguments);
+    break;
+  case LEG:
+    legacy_scan(arguments);
     break;
   default:
     fprintf(stderr, "invalid type\n");

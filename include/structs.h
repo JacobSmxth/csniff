@@ -1,7 +1,13 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
-typedef enum { TCP, SYN } SCAN_TYPE;
+typedef struct {
+  char *target;
+  int port;
+  int open_exclusive;
+} Args;
+
+typedef enum { LEG, TCP, SYN } SCAN_TYPE;
 
 typedef struct {
   char *target;

@@ -59,7 +59,7 @@ int get_ports(ScanArgs *args, char *ports) {
 
         args->port_start = thePorts[0];
       }
-      if (thePorts[1] >= 65335) {
+      if (thePorts[1] > 65335) {
         fprintf(stderr, "You should know ports only go up to 65535. I have set "
                         "it to that just so this will function.\n");
         args->port_end = 65535;
@@ -102,12 +102,12 @@ int get_target(ScanArgs *scan_args, char *target) {
 ScanArgs *parse_arguments(int argc, char *argv[]) {
 
   ScanArgs *scan_args = malloc(sizeof(ScanArgs));
-  scan_args->open_exclusive = 0;
-  scan_args->type = TCP;
   if (!scan_args) {
     fprintf(stderr, "Malloc error\n");
     return NULL;
   }
+  scan_args->open_exclusive = 0;
+  scan_args->type = TCP;
 
   for (int i = 1; i < argc; i++) {
     char argument = validate_argument(argv[i]);
@@ -128,7 +128,22 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       scan_args->open_exclusive = 1;
       break;
     case 's':
+      if (scan_args->type != TCP) {
+        fprintf(stderr, "Already set a scan type. You're confusing me. Falling "
+                        "back to TCP\n");
+        scan_args->type = TCP;
+        break;
+      }
       scan_args->type = SYN;
+      break;
+    case 'n':
+      if (scan_args->type != TCP) {
+        fprintf(stderr, "Already set a scan type. You're confusing me. Falling "
+                        "back to TCP\n");
+        scan_args->type = TCP;
+        break;
+      }
+      scan_args->type = LEG;
       break;
     case 'h':
       print_help();
