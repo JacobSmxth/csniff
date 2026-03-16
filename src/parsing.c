@@ -59,7 +59,7 @@ int get_ports(ScanArgs *args, char *ports) {
 
         args->port_start = thePorts[0];
       }
-      if (thePorts[1] > 65335) {
+      if (thePorts[1] > 65535) {
         fprintf(stderr, "You should know ports only go up to 65535. I have set "
                         "it to that just so this will function.\n");
         args->port_end = 65535;
