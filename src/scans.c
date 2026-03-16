@@ -60,7 +60,7 @@ void tcp_scan(ScanArgs *arguments) {
   int end = arguments->port_end;
   int count = end - start + 1;
 
-  if (count > 10000) {
+  if (count > 4500) {
     printf("I aint doing all that.\n");
     return;
   }
