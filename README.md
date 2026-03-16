@@ -39,14 +39,16 @@ Show only open ports:
 - `-p <port>` : Port or range (e.g. `80` or `1-1024`)
 - `-o` : Show open ports only
 - `-s` : SYN scan mode (not yet implemented, falls back to TCP)
+- `-n` : Legacy scan mode (single-threaded, no port cap)
 - `-m` : Scan local machine (not yet implemented)
 - `-h` : Help
 
 ## Notes
 
-- Port ranges are capped at 4500 ports for now
+- Multithreaded by default, one thread per port
+- Ranges over 4500 ports automatically fall back to legacy (single-threaded) mode
 - Ports are corrected automatically if out of range (1-65535)
-- Each port gets its own thread, all joined before exit
+- Only one scan type flag can be set at a time, conflicts fall back to TCP
 
 ## Planned
 
