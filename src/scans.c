@@ -13,7 +13,7 @@ typedef struct {
   int open_exclusive;
 } Args;
 
-int scan(char *target, int port, int open) {
+int scan(char *target, int port) {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
     perror("socket");
