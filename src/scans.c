@@ -1,7 +1,6 @@
 #include "structs.h"
 #include <arpa/inet.h>
 #include <pthread.h> // Need to set up multithreading
-#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,6 +60,11 @@ void tcp_scan(ScanArgs *arguments) {
   int end = arguments->port_end;
   int count = end - start + 1;
 
+  if (count > 10000) {
+    printf("I aint doing all that.\n");
+    return;
+  }
+
   pthread_t threads[count];
 
   for (int i = 0; i < count; i++) {
@@ -75,6 +79,7 @@ void tcp_scan(ScanArgs *arguments) {
   for (int i = 0; i < count; i++) {
     pthread_join(threads[i], NULL);
   }
+
   free(arguments->target);
   free(arguments);
 }
