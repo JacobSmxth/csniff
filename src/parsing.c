@@ -1,14 +1,9 @@
+#include "structs.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-typedef struct {
-  char *target;
-  int port_start;
-  int port_end;
-} ScanArgs;
 
 char validate_argument(char *argument) {
   if (argument[0] != '-') {
@@ -64,7 +59,7 @@ int get_ports(ScanArgs *args, char *ports) {
 
         args->port_start = thePorts[0];
       }
-      if (thePorts[1] > 65335) {
+      if (thePorts[1] >= 65335) {
         fprintf(stderr, "You should know ports only go up to 65535. I have set "
                         "it to that just so this will function.\n");
         args->port_end = 65535;
@@ -104,8 +99,11 @@ int get_target(ScanArgs *scan_args, char *target) {
   return 1;
 }
 
-ScanArgs *process_parsings(int argc, char *argv[]) {
+ScanArgs *parse_arguments(int argc, char *argv[]) {
+
   ScanArgs *scan_args = malloc(sizeof(ScanArgs));
+  scan_args->open_exclusive = 0;
+  scan_args->type = TCP;
   if (!scan_args) {
     fprintf(stderr, "Malloc error\n");
     return NULL;
@@ -125,6 +123,12 @@ ScanArgs *process_parsings(int argc, char *argv[]) {
         memcpy(scan_args->target, target, strlen(target) + 1);
       }
       get_ports(scan_args, argv[++i]);
+      break;
+    case 'o':
+      scan_args->open_exclusive = 1;
+      break;
+    case 's':
+      scan_args->type = SYN;
       break;
     case 'h':
       print_help();
@@ -161,8 +165,4 @@ ScanArgs *process_parsings(int argc, char *argv[]) {
   // END OF TESTING and DEBUGS
 
   return scan_args;
-}
-
-ScanArgs *parse_arguments(int argc, char *argv[]) {
-  return process_parsings(argc, argv);
 }
