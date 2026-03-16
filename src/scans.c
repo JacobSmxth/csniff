@@ -1,12 +1,20 @@
 #include "structs.h"
 #include <arpa/inet.h>
 #include <pthread.h> // Need to set up multithreading
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
-int scan(char *target, int port) {
+typedef struct {
+  char *target;
+  int port;
+  int open_exclusive;
+} Args;
+
+int scan(char *target, int port, int open) {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
     perror("socket");
@@ -22,18 +30,50 @@ int scan(char *target, int port) {
   return result;
 }
 
+void *threaded_scan(void *args) {
+  Args *arguments = (Args *)args;
+
+  int sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (sock < 0) {
+    perror("socket");
+    return NULL;
+  }
+
+  struct sockaddr_in addr;
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(arguments->port);
+  inet_pton(AF_INET, arguments->target, &addr.sin_addr);
+  if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == 0) {
+    printf("Port %d open\n", arguments->port);
+  } else {
+    if (!arguments->open_exclusive) {
+      printf("Port %d closed\n", arguments->port);
+    }
+  }
+  close(sock);
+  free(args);
+  return NULL;
+}
+
 void tcp_scan(ScanArgs *arguments) {
   printf("Running TCP Scan\n");
   int start = arguments->port_start;
   int end = arguments->port_end;
-  for (int port = start; port <= end; port++) {
-    if (scan(arguments->target, port)) {
-      printf("Port %d OPEN\n", port);
-    } else {
-      if (!arguments->open_exclusive) {
-        printf("Port %d CLOSED\n", port);
-      }
-    }
+  int count = end - start + 1;
+
+  pthread_t threads[count];
+
+  for (int i = 0; i < count; i++) {
+    Args *newArgs = malloc(sizeof(Args));
+    newArgs->target = malloc(strlen(arguments->target) + 1);
+    memcpy(newArgs->target, arguments->target, strlen(arguments->target) + 1);
+    newArgs->port = start + i;
+    newArgs->open_exclusive = arguments->open_exclusive;
+    pthread_create(&threads[i], NULL, threaded_scan, newArgs);
+  }
+
+  for (int i = 0; i < count; i++) {
+    pthread_join(threads[i], NULL);
   }
   free(arguments->target);
   free(arguments);
