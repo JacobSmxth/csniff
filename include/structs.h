@@ -7,7 +7,7 @@ typedef struct {
   int open_exclusive;
 } Args;
 
-typedef enum { LEG, TCP } SCAN_TYPE;
+typedef enum { LEG, TCP, NUL } SCAN_TYPE;
 
 typedef struct {
   char *target;

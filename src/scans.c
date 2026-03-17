@@ -128,6 +128,8 @@ void scan_target(ScanArgs *arguments) {
   case LEG:
     legacy_scan(arguments);
     break;
+  case NUL:
+    break;
   default:
     fprintf(stderr, "Invalid scan type selected\n");
     free(arguments->target);

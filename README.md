@@ -38,7 +38,6 @@ Show only open ports:
 - `-t <ip>` : Target IPv4 address
 - `-p <port>` : Port or range (e.g. `80` or `1-1024`)
 - `-o` : Show open ports only
-- `-s` : SYN scan mode (not yet implemented, falls back to TCP)
 - `-n` : Legacy scan mode (single-threaded, no port cap)
 - `-m` : Scan local machine (not yet implemented)
 - `-h` : Help

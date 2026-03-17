@@ -149,6 +149,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       scan_args->type = LEG;
       break;
     case 'h':
+      scan_args->type = NUL;
       print_help();
       break;
     case 'm':
