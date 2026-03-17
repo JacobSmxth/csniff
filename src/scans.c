@@ -75,9 +75,9 @@ void tcp_scan(ScanArgs *arguments) {
   int count = end - start + 1;
 
   if (count > 4500) {
-    printf(
-        "I DONT KNOW THREAD POOLS YET. ARE YOU TRYING TO FRY YOUR RAM?!?!\n");
-    printf("Falling back to legacy not multithreaded things to handle this\n");
+    printf("Thread pools are not setup. Falling back to single-threaded tcp "
+           "scan\n");
+    ;
     legacy_scan(arguments);
     return;
   }
@@ -106,16 +106,13 @@ void syn_scan(ScanArgs *arguments) {
   int start = arguments->port_start;
   int end = arguments->port_end;
   int open_only = arguments->open_exclusive;
-  printf("SYN SCAN. Scan function not complete.\n");
-  printf("Starting at port %d, ending at port %d. Syn Scan.\n", start, end);
   if (open_only) {
     printf("Showing only open ports\n");
   } else {
     printf("Showing all port results\n");
   }
 
-  printf("Falling back to default TCP Scan\nSYN SCAN NOT COMPLETE OR READY TO "
-         "BE USED.\n");
+  printf("Falling back to default TCP Scan\n");
   tcp_scan(arguments);
 }
 

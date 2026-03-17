@@ -15,8 +15,11 @@ char validate_argument(char *argument) {
 }
 
 void print_help() {
-  printf("HELP ISN't AVAILABLE... Trying API again in 5 seconds... (I'm joking "
-         "just haven't coded anything)\n");
+  printf("command format: ./build/port_sniffer -t <target> -p <port/range> "
+         "|options|\n");
+  printf("options:\n");
+  printf(
+      "-o  Hides any closed ports\n-n  Legacy scan mode\n-s  Syn scan mode\n");
 }
 
 int *validate_port_range(char *ports) {
@@ -52,8 +55,10 @@ int get_ports(ScanArgs *args, char *ports) {
     } else {
 
       if (thePorts[0] <= 0) {
-        fprintf(stderr, "Dawg. I swear. There isn't a port 0. I set it to 1 "
-                        "instead. Cause I think we want this to run\n");
+        fprintf(stderr,
+                "%d is an invalid port. Can't have a port lower than 1. "
+                "Setting to 1.\n",
+                thePorts[0]);
         args->port_start = 1;
         changed = 1;
       } else {
@@ -61,8 +66,10 @@ int get_ports(ScanArgs *args, char *ports) {
         args->port_start = thePorts[0];
       }
       if (thePorts[1] > 65535) {
-        fprintf(stderr, "You should know ports only go up to 65535. I have set "
-                        "it to that just so this will function.\n");
+        fprintf(
+            stderr,
+            "%d is an invalid port. Highest port is 65535. Setting to 65535.\n",
+            thePorts[1]);
         args->port_end = 65535;
         changed = 1;
       } else {
@@ -84,7 +91,7 @@ int get_ports(ScanArgs *args, char *ports) {
 int get_target(ScanArgs *scan_args, char *target) {
   struct in_addr addr;
   if (!scan_args) {
-    fprintf(stderr, "ScanArgs doesn't exist\n");
+    fprintf(stderr, "invalid target\n");
     return 0;
   }
 
@@ -108,7 +115,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
 
   ScanArgs *scan_args = malloc(sizeof(ScanArgs));
   if (!scan_args) {
-    fprintf(stderr, "Malloc error\n");
+    perror("malloc");
     return NULL;
   }
   scan_args->open_exclusive = 0;
@@ -123,7 +130,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       break;
     case 'p':
       if (!scan_args->target) {
-        printf("No target specified, falling back to default\n");
+        printf("No target specified, falling back to 192.168.1.10\n");
         char *target = "192.168.1.10";
         scan_args->target = malloc(strlen(target) + 1);
         memcpy(scan_args->target, target, strlen(target) + 1);
@@ -135,8 +142,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       break;
     case 's':
       if (scan_args->type != TCP) {
-        fprintf(stderr, "Already set a scan type. You're confusing me. Falling "
-                        "back to TCP\n");
+        fprintf(stderr, "Can't set multiple scan types. Falling back to TCP");
         scan_args->type = TCP;
         break;
       }
@@ -144,8 +150,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       break;
     case 'n':
       if (scan_args->type != TCP) {
-        fprintf(stderr, "Already set a scan type. You're confusing me. Falling "
-                        "back to TCP\n");
+        fprintf(stderr, "Can't set multiple scan types. Falling back to TCP");
         scan_args->type = TCP;
         break;
       }
@@ -155,15 +160,10 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
       print_help();
       break;
     case 'm':
-      printf("Hello darling :)\n");
+      printf("Local host scan is not functional yet.\n");
       break;
     default:
-      fprintf(stderr,
-              "Did you seriously think that '%s' would work. Stop trying to "
-              "make up things. im serious. ",
-              argv[i]);
-      argv[++i] ? printf("You even tried saying it was '%s'. LMAO", argv[i])
-                : printf(" ");
+      fprintf(stderr, "%s doesn't exist.\n", argv[i]);
       printf("\n");
       exit(EXIT_FAILURE);
     }
