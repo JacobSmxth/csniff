@@ -21,25 +21,21 @@ int get_selection_int(char *input) { // Takes input and turns in into integer
 }
 
 int prompt_for_int(char *prompt) { // Prompt to get integer
-  while (1) {
-    printf("%s> ", prompt);
-    char input[100];
-    fgets(input, 100, stdin);
-    input[strcspn(input, "\n")] = '\0';
-    return get_selection_int(input);
-  }
+  printf("%s> ", prompt);
+  char input[100];
+  fgets(input, 100, stdin);
+  input[strcspn(input, "\n")] = '\0';
+  return get_selection_int(input);
 }
 
 char prompt_for_char(char *prompt) { // Prompt to get character
-  while (1) {
-    printf("%s> ", prompt);
-    char ch;
-    scanf("%c", &ch);
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF)
-      ;
-    return ch;
-  }
+  printf("%s> ", prompt);
+  char ch;
+  scanf("%c", &ch);
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF)
+    ;
+  return ch;
 }
 
 char *prompt_for_ipv4(char *prompt) { // Prompt to get IPv4 in a string

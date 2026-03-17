@@ -169,21 +169,5 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
     }
   }
 
-  // TESTING and DEBUGS:
-  // if (!scan_args->target) {
-  //   scan_args->target = malloc(strlen("192.168.1.0") + 1);
-  //   scan_args->target = "192.168.1.0";
-  // }
-  // if (!scan_args->port_start) {
-  //   scan_args->port_start = 1;
-  // }
-  // if (!scan_args->port_end) {
-  //   scan_args->port_end = 1024;
-  // }
-  // printf("FINAL CHECK: %s: %d, %d\n", scan_args->target,
-  // scan_args->port_start,
-  //        scan_args->port_end);
-  // END OF TESTING and DEBUGS
-
   return scan_args;
 }
