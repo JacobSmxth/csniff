@@ -30,6 +30,18 @@ int prompt_for_int(char *prompt) {
   }
 }
 
+char prompt_for_char(char *prompt) {
+  while (1) {
+    printf("%s> ", prompt);
+    char ch;
+    scanf("%c", &ch);
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+      ;
+    return ch;
+  }
+}
+
 char *prompt_for_ipv4(char *prompt) {
   struct in_addr addr;
   while (1) {
@@ -56,7 +68,19 @@ ScanArgs *get_scan_args() {
     exit(EXIT_FAILURE);
   }
 
-  args->open_exclusive = 1;
+  switch (prompt_for_char("Do you want to show only open ports (y/n)")) {
+  case 'y':
+    args->open_exclusive = 1;
+    break;
+  case 'n':
+    args->open_exclusive = 0;
+    break;
+  default:
+    fprintf(stderr, "falling back to showing all results");
+    args->open_exclusive = 0;
+    break;
+  }
+
   args->type = TCP;
   int start, end;
 
@@ -78,21 +102,29 @@ ScanArgs *get_scan_args() {
   args->port_end = end;
   char *target = prompt_for_ipv4("Enter target ipv4");
   args->target = malloc(strlen(target) + 1);
-  memcpy(args->target, target, strlen(target));
+  memcpy(args->target, target, strlen(target) + 1);
+  free(target);
 
   return args;
 }
 
 void process_menu_option(int choice) {
-  ScanArgs *args = get_scan_args();
+  ScanArgs *args;
   switch (choice) {
   case 1:
+    args = get_scan_args();
     break;
   case 2:
+    args = get_scan_args();
     args->type = LEG;
     break;
   case 3:
+    args = get_scan_args();
     args->type = SYN;
+    break;
+  case 4:
+    exit(EXIT_SUCCESS);
+    return;
     break;
   default:
     break;
@@ -102,18 +134,14 @@ void process_menu_option(int choice) {
 
 ScanArgs *menuPrompt() {
   while (1) {
-    printf("This is the general menu layout!\n");
     printf("\nMenu Options\n");
     printf("================\n");
     printf("1. Multi-threaded TCP Scan\n2. Single-threaded TCP Scan\n3. SYN "
-           "Scan\n\n");
+           "Scan\n4. Exit\n");
     printf("Make selection> ");
     char input[100];
     fgets(input, 100, stdin);
     process_menu_option(get_selection_int(input));
     input[strcspn(input, "\n")] = '\0';
-    if (strcmp(input, "Jacob") == 0) {
-      exit(EXIT_SUCCESS);
-    }
   }
 }

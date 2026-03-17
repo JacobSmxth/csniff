@@ -54,7 +54,7 @@ void legacy_scan(ScanArgs *arguments) {
   int end = arguments->port_end;
   int open_exclusive = arguments->open_exclusive;
 
-  for (int port = start; port < end; port++) {
+  for (int port = start; port <= end; port++) {
     if (scan(arguments->target, port)) {
       printf("Port %d open\n", port);
     } else {
@@ -132,6 +132,8 @@ void scan_target(ScanArgs *arguments) {
     break;
   default:
     fprintf(stderr, "invalid type\n");
+    free(arguments->target);
+    free(arguments);
     break;
   }
 }

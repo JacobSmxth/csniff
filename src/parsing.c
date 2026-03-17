@@ -113,6 +113,7 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
   }
   scan_args->open_exclusive = 0;
   scan_args->type = TCP;
+  scan_args->target = NULL;
 
   for (int i = 1; i < argc; i++) {
     char argument = validate_argument(argv[i]);
