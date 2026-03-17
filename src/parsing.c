@@ -109,7 +109,7 @@ int get_target(ScanArgs *scan_args, char *target) {
 
 ScanArgs *parse_arguments(int argc, char *argv[]) {
 
-  if (argc == 1) {
+  if (argc == 1) { // If no arguments entered, open interactive selection
     return menuPrompt();
   }
 

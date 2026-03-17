@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-int get_selection_int(char *input) {
+int get_selection_int(char *input) { // Takes input and turns in into integer
   int val;
-  errno = 0;
+  errno = 0; // Reset to detect errors
   val = (int)strtol(input, NULL, 0);
 
   // I never realized how nice man pages were
@@ -20,7 +20,7 @@ int get_selection_int(char *input) {
   return val;
 }
 
-int prompt_for_int(char *prompt) {
+int prompt_for_int(char *prompt) { // Prompt to get integer
   while (1) {
     printf("%s> ", prompt);
     char input[100];
@@ -30,7 +30,7 @@ int prompt_for_int(char *prompt) {
   }
 }
 
-char prompt_for_char(char *prompt) {
+char prompt_for_char(char *prompt) { // Prompt to get character
   while (1) {
     printf("%s> ", prompt);
     char ch;
@@ -42,14 +42,15 @@ char prompt_for_char(char *prompt) {
   }
 }
 
-char *prompt_for_ipv4(char *prompt) {
+char *prompt_for_ipv4(char *prompt) { // Prompt to get IPv4 in a string
   struct in_addr addr;
   while (1) {
     printf("%s> ", prompt);
     char input[100];
     fgets(input, 100, stdin);
     input[strcspn(input, "\n")] = '\0';
-    if (inet_pton(AF_INET, input, &addr) == 1) {
+    if (inet_pton(AF_INET, input, &addr) ==
+        1) { // Make sure its a valid IPv4 address
       size_t len = strlen(input) + 1;
       char *address = malloc(len);
       memcpy(address, input, len);
@@ -61,7 +62,7 @@ char *prompt_for_ipv4(char *prompt) {
   }
 }
 
-ScanArgs *get_scan_args() {
+ScanArgs *get_scan_args() { // Prompting for scan_args
   ScanArgs *args = malloc(sizeof(ScanArgs));
   if (!args) {
     perror("args malloc");
