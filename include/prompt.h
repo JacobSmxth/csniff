@@ -1,6 +1,8 @@
 #ifndef PROMPT_H
 #define PROMPT_H
 
-void menuPrompt();
+#include "structs.h"
+
+ScanArgs *menuPrompt();
 
 #endif

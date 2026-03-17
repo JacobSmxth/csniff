@@ -1,3 +1,4 @@
+#include "prompt.h"
 #include "structs.h"
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -100,6 +101,10 @@ int get_target(ScanArgs *scan_args, char *target) {
 }
 
 ScanArgs *parse_arguments(int argc, char *argv[]) {
+
+  if (argc == 1) {
+    return menuPrompt();
+  }
 
   ScanArgs *scan_args = malloc(sizeof(ScanArgs));
   if (!scan_args) {

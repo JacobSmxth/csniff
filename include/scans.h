@@ -4,6 +4,7 @@
 #include "structs.h"
 
 void scan_target(ScanArgs *arguments);
-void syn_scan(ScanArgs *arguments);
+void *threaded_scan(void *args);
 
+void scan_target(ScanArgs *arguments);
 #endif
