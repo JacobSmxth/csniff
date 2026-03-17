@@ -45,10 +45,10 @@ void *threaded_scan(void *args) {
   addr.sin_port = htons(arguments->port);
   inet_pton(AF_INET, arguments->target, &addr.sin_addr);
   if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == 0) {
-    printf("Port %d open\n", arguments->port);
+    printf("Port %d open\n\n", arguments->port);
   } else {
     if (!arguments->open_exclusive) {
-      printf("Port %d closed\n", arguments->port);
+      printf("Port %d closed\n\n", arguments->port);
     }
   }
   close(sock);
@@ -58,7 +58,8 @@ void *threaded_scan(void *args) {
 }
 
 void legacy_scan(ScanArgs *arguments) {
-  printf("Running legacy scan\n");
+  printf("========================\n");
+  printf("Running legacy scan\n\n");
   int start = arguments->port_start;
   int end = arguments->port_end;
   int open_exclusive = arguments->open_exclusive;
@@ -66,13 +67,14 @@ void legacy_scan(ScanArgs *arguments) {
   // Loops the scan over all the ports
   for (int port = start; port <= end; port++) {
     if (scan(arguments->target, port)) {
-      printf("Port %d open\n", port);
+      printf("Port %d open\n\n", port);
     } else {
       if (!open_exclusive) { // Checks if user chose to hide closed ports
-        printf("Port %d closed\n", port);
+        printf("Port %d closed\n\n", port);
       }
     }
   }
+  printf("========================\n");
 
   // Free the arguments
   free(arguments->target);
@@ -80,7 +82,8 @@ void legacy_scan(ScanArgs *arguments) {
 }
 
 void tcp_scan(ScanArgs *arguments) {
-  printf("Running TCP Scan\n");
+  printf("========================\n");
+  printf("Running TCP Scan\n\n");
   // Set variables so I don't have to pull from heap, quicker with stack
   int start = arguments->port_start;
   int end = arguments->port_end;
@@ -111,33 +114,16 @@ void tcp_scan(ScanArgs *arguments) {
   for (int i = 0; i < count; i++) {
     pthread_join(threads[i], NULL); // Chain them all together
   }
+  printf("========================\n");
 
   free(arguments->target);
   free(arguments);
-}
-
-void syn_scan(ScanArgs *arguments) {
-
-  int start = arguments->port_start;
-  int end = arguments->port_end;
-  int open_only = arguments->open_exclusive;
-  if (open_only) {
-    printf("Showing only open ports\n");
-  } else {
-    printf("Showing all port results\n");
-  }
-
-  printf("Falling back to default TCP Scan\n");
-  tcp_scan(arguments);
 }
 
 void scan_target(ScanArgs *arguments) {
   switch (arguments->type) {
   case TCP:
     tcp_scan(arguments);
-    break;
-  case SYN:
-    syn_scan(arguments);
     break;
   case LEG:
     legacy_scan(arguments);

@@ -116,10 +116,6 @@ void process_menu_option(int choice) {
     args->type = LEG;
     break;
   case 3:
-    args = get_scan_args();
-    args->type = SYN;
-    break;
-  case 4:
     exit(EXIT_SUCCESS);
     return;
     break;
@@ -133,8 +129,8 @@ ScanArgs *menuPrompt() {
   while (1) {
     printf("\nMenu Options\n");
     printf("================\n");
-    printf("1. Multi-threaded TCP Scan\n2. Single-threaded TCP Scan\n3. SYN "
-           "Scan\n4. Exit\n");
+    printf("1. Multi-threaded TCP Scan\n2. Single-threaded TCP Scan\n"
+           "3. Exit\n");
     printf("Make selection> ");
     char input[100];
     fgets(input, 100, stdin);

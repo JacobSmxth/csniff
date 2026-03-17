@@ -140,14 +140,6 @@ ScanArgs *parse_arguments(int argc, char *argv[]) {
     case 'o':
       scan_args->open_exclusive = 1;
       break;
-    case 's':
-      if (scan_args->type != TCP) {
-        fprintf(stderr, "Can't set multiple scan types. Falling back to TCP");
-        scan_args->type = TCP;
-        break;
-      }
-      scan_args->type = SYN;
-      break;
     case 'n':
       if (scan_args->type != TCP) {
         fprintf(stderr, "Can't set multiple scan types. Falling back to TCP");
