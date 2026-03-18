@@ -44,15 +44,13 @@ Show only open ports:
 
 ## Notes
 
-- Multithreaded by default, one thread per port
-- Ranges over 4500 ports automatically fall back to legacy (single-threaded) mode
+- Multithreaded by default using a thread pool (32 workers)
 - Ports are corrected automatically if out of range (1-65535)
 - Only one scan type flag can be set at a time, conflicts fall back to TCP
 
 ## Planned
 
 - Run with no args and get an interactive prompt to fill in options
-- Thread pool to replace one-thread-per-port and remove the port cap
 - SYN scan using raw sockets
 - UDP scan
 - Local machine / default gateway scan with `-m`
