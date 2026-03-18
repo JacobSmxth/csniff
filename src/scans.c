@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#define POOL_SIZE 32
+
 int scan(char *target, int port) {
   // socket() creates a new socket using IPv4 internet protocols, provides a
   // reliable two way connection
@@ -28,14 +30,14 @@ int scan(char *target, int port) {
   return result;  // function return if successful or not
 }
 
-void *threaded_scan(void *args) {
+void threaded_scan(void *args) {
   // Cast void* to a Args* struct
   Args *arguments = (Args *)args;
 
   int sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0) {
     perror("socket");
-    return NULL;
+    return;
   }
 
   // Basically a repeat of the scan function except pulling from a struct this
@@ -54,7 +56,7 @@ void *threaded_scan(void *args) {
   close(sock);
   // Have to free the arguments this time
   free(args);
-  return NULL;
+  return;
 }
 
 void legacy_scan(ScanArgs *arguments) {
@@ -84,36 +86,26 @@ void legacy_scan(ScanArgs *arguments) {
 void tcp_scan(ScanArgs *arguments) {
   printf("========================\n");
   printf("Running TCP Scan\n\n");
+
   // Set variables so I don't have to pull from heap, quicker with stack
+
   int start = arguments->port_start;
   int end = arguments->port_end;
-  // Some math to get proper count of ports;
-  int count = end - start + 1;
 
-  if (count >
-      4500) { // Fallback to normal scan because my thread pool isn't set up
-    printf("Thread pools are not setup. Falling back to single-threaded tcp "
-           "scan\n");
-    ;
-    legacy_scan(arguments);
-    return;
+  thread_pool_t pool;
+  pool_init(&pool, POOL_SIZE);
+
+  for (int port = start; port <= end; port++) {
+    Args *arg = malloc(sizeof(Args));
+    arg->target = malloc(strlen(arguments->target) + 1);
+    memcpy(arg->target, arguments->target, strlen(arguments->target) + 1);
+    arg->port = port;
+    arg->open_exclusive = arguments->open_exclusive;
+    pool_submit(&pool, threaded_scan, arg);
   }
 
-  pthread_t threads[count]; // Lots of ports
+  pool_destroy(&pool);
 
-  for (int i = 0; i < count; i++) {
-    Args *newArgs = malloc(sizeof(Args));
-    newArgs->target = malloc(strlen(arguments->target) + 1);
-    memcpy(newArgs->target, arguments->target, strlen(arguments->target) + 1);
-    newArgs->port = start + i;
-    newArgs->open_exclusive = arguments->open_exclusive;
-    pthread_create(&threads[i], NULL, threaded_scan,
-                   newArgs); // Use threaded_scan() to do multithreaded
-  }
-
-  for (int i = 0; i < count; i++) {
-    pthread_join(threads[i], NULL); // Chain them all together
-  }
   printf("========================\n");
 
   free(arguments->target);
